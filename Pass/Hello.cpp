@@ -17,10 +17,11 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Pass.h"
+#include "llvm/IR/Dominators.h"
 #include "llvm/Support/raw_ostream.h"
-using namespace llvm;
 
-STATISTIC(HelloCounter, "Counts number of functions greeted");
+
+using namespace llvm;
 
 namespace {
 	
@@ -51,7 +52,7 @@ namespace {
 		
 		//Constructor
 		individualStats(){
-			min = 0;
+			min = 222222222;
 			max = 0;
 			total = 0;
 			num = 0;
@@ -61,7 +62,8 @@ namespace {
 			//Comapre to min/max
 			if (newStat>max){
 				max = newStat;
-			}else if(newStat<min){
+			}
+			if(newStat<min){
 				min = newStat;
 			}
 			//Add new info
@@ -70,9 +72,13 @@ namespace {
 		}
 		//Print information
 		void print(){
-			errs() << "min:";
-			errs() << "max:";
-			errs() << "avg:";
+			float avg = (float) total/num;
+      		errs() << '\n';
+			errs() << "min:" << min << '\n';
+			errs() << "max:" << max << '\n';
+			errs() << "avg:" << avg << '\n';
+			errs() << "num:" << num << '\n';
+      		errs() << '\n';
 		}
 
 	};
@@ -97,16 +103,12 @@ namespace {
 		void print(){
 			errs() << "Basic Blocks:";
 			basicBlocks.print();
-
 			errs() << "CFG:";
 			CFG.print();
-
 			errs() << "Single Loops:";
 			singleLoop.print();
-
 			errs() << "Basic Blocks:";
 			basicBlockLoop.print();
-
 			errs() << "Dominators:";
 			dominators.print();
 		}
@@ -120,11 +122,54 @@ namespace {
 		//Initialize moduleStats
 		moduleStats fullStats;
 
+		//Run for each module
 		virtual bool runOnModule(Module &M) {
-			++HelloCounter;
-			errs() << "asd:Hello: ";
-			//errs().write_escaped(F.getName()) << '\n';
+			//Get list of functions			
+			Module::FunctionListType &allFunctions = M.getFunctionList();
+            //Interate through Functions
+			for (Module::iterator newFunction = allFunctions.begin(); newFunction != allFunctions.end(); newFunction++) {
+				functionStats newStats;
+      errs().write_escaped(newFunction->getName()) << '\n';
+				//Run Code for functions
+				runOnFunction(newFunction, newStats);
+				
+				//If there is actually a block, then add info				
+				if (newStats.basicBlocks>0){
+					fullStats.add(newStats);
+				}
+            }
+
+
+			fullStats.print();		//print stats before leaving
 			return false;
+		}
+
+		//Run for each function
+		void runOnFunction(Function* newFunction, functionStats &newStats){
+			DominatorTree& DT = getAnalysis<DominatorTree>(newFunction);
+			DominatorTreeBase<BasicBlock>* dominatorTree = new DominatorTreeBase<BasicBlock>(false);			
+
+			//Get list of basic blocks			
+			Function::BasicBlockListType &allblocks = newFunction->getBasicBlockList();
+			//Go through basic blocks
+			for (Function::const_iterator newBlock = allblocks.begin(); newBlock != allblocks.end(); newBlock++) {
+				//Count Basic Blocks
+				newStats.basicBlocks++;
+
+				//Count Dominators
+				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
+					if((dominatorTree->dominates(repeatBlock,NULL))==true){
+						newStats.dominators++;
+					}
+				}
+			}
+
+			errs() << newStats.dominators << '\n';
+		}
+
+		// We don't modify the program, so we preserve all analyses.
+		virtual void getAnalysisUsage(AnalysisUsage &AU) const {
+		  AU.setPreservesAll();
 		}
 	};
 }
