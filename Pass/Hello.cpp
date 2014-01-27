@@ -112,45 +112,28 @@ namespace {
 			errs() << "Dominators:";
 			dominators.print();
 		}
+
+		~moduleStats(){
+			print();
+		}
 	};
 	
-	struct Hello : public ModulePass {
+	struct Hello : public FunctionPass {
 		// Pass identification, replacement for typeid
 		static char ID; 
-		Hello() : ModulePass(ID) {}
+		Hello() : FunctionPass(ID) {}
 
 		//Initialize moduleStats
 		moduleStats fullStats;
 
-		//Run for each module
-		virtual bool runOnModule(Module &M) {
-			//Get list of functions			
-			Module::FunctionListType &allFunctions = M.getFunctionList();
-            //Interate through Functions
-			for (Module::iterator newFunction = allFunctions.begin(); newFunction != allFunctions.end(); newFunction++) {
-				functionStats newStats;
-      errs().write_escaped(newFunction->getName()) << '\n';
-				//Run Code for functions
-				runOnFunction(newFunction, newStats);
-				
-				//If there is actually a block, then add info				
-				if (newStats.basicBlocks>0){
-					fullStats.add(newStats);
-				}
-            }
-
-
-			fullStats.print();		//print stats before leaving
-			return false;
-		}
-
 		//Run for each function
-		void runOnFunction(Function* newFunction, functionStats &newStats){
-			DominatorTree& DT = getAnalysis<DominatorTree>(newFunction);
-			DominatorTreeBase<BasicBlock>* dominatorTree = new DominatorTreeBase<BasicBlock>(false);			
+		virtual bool runOnFunction(Function &F){
+			functionStats newStats;
+				//DominatorTree &dt = getAnalysis<DominatorTree>(*newFunction);
+			//DominatorTreeBase<BasicBlock>* dominatorTree = new DominatorTreeBase<BasicBlock>(false);			
 
 			//Get list of basic blocks			
-			Function::BasicBlockListType &allblocks = newFunction->getBasicBlockList();
+			Function::BasicBlockListType &allblocks = F.getBasicBlockList();
 			//Go through basic blocks
 			for (Function::const_iterator newBlock = allblocks.begin(); newBlock != allblocks.end(); newBlock++) {
 				//Count Basic Blocks
@@ -158,13 +141,16 @@ namespace {
 
 				//Count Dominators
 				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
-					if((dominatorTree->dominates(repeatBlock,NULL))==true){
-						newStats.dominators++;
-					}
+					//if((dominatorTree->dominates(repeatBlock,NULL))==true){
+					//	newStats.dominators++;
+					//}
 				}
 			}
 
-			errs() << newStats.dominators << '\n';
+			//If there is actually a block, then add info				
+			if (newStats.basicBlocks>0){
+				fullStats.add(newStats);
+			}
 		}
 
 		// We don't modify the program, so we preserve all analyses.
