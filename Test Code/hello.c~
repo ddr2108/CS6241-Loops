@@ -2,12 +2,14 @@
 #include <stdlib.h>
 void third(){
   printf("hello world\n");
+
 	return;
 
 }
 
 void second(){
   printf("hello world\n");
+
 	return;
   
 }
@@ -16,8 +18,9 @@ void second(){
 int main() {
   second();
 int i;
-while(rand()%20!=3);
-third();
+while(rand()%1000!=3);
+//while(rand()%1000!=3);}
+
   return 0;
 }
 

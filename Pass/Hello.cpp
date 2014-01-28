@@ -19,7 +19,7 @@
 #include "llvm/Pass.h"
 #include "llvm/IR/Dominators.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include "llvm/Analysis/LoopInfo.h"
 
 using namespace llvm;
 
@@ -128,16 +128,26 @@ namespace {
 
 		//Run for each function
 		virtual bool runOnFunction(Function &F){
-			functionStats newStats;
-				//DominatorTree &dt = getAnalysis<DominatorTree>(*newFunction);
+			functionStats newStats;		//hold stats about function
+			
+			//Get loopinfo
+  			LoopInfo &LI = getAnalysis<LoopInfo>();
+			//DominatorTree &dt = getAnalysis<DominatorTree>();
 			//DominatorTreeBase<BasicBlock>* dominatorTree = new DominatorTreeBase<BasicBlock>(false);			
 
+      errs().write_escaped(F.getName()) << '\n';
+			/////////////////////////////////DO BASIC BLOCK STUFF/////////////////////////////////////////////////
 			//Get list of basic blocks			
 			Function::BasicBlockListType &allblocks = F.getBasicBlockList();
 			//Go through basic blocks
 			for (Function::const_iterator newBlock = allblocks.begin(); newBlock != allblocks.end(); newBlock++) {
 				//Count Basic Blocks
 				newStats.basicBlocks++;
+
+				Loop* innerloop=LI.getLoopFor(&newBlock);
+				if(innerloop==NULL){ errs()<<" \n(not loop)\n ";}
+				else { errs()<<" \n(loop)\n ";}
+
 
 				//Count Dominators
 				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
@@ -147,19 +157,29 @@ namespace {
 				}
 			}
 
+			///////////////////////////DO LOOP STUFF//////////////////////////////////////////////////////////////
+			//Do Loop stuff
+			for (LoopInfo::iterator newLoop = LI.begin(); newLoop != LI.end(); newLoop++) {
+      //          Function* function = newLoop.getHeader()->getParent();
+      //errs().write_escaped(function.getName()) << '\n';
+						errs() << "a"<< '\n';
+			}
+
 			//If there is actually a block, then add info				
 			if (newStats.basicBlocks>0){
 				fullStats.add(newStats);
 			}
+
+			return false; 
 		}
 
-		// We don't modify the program, so we preserve all analyses.
 		virtual void getAnalysisUsage(AnalysisUsage &AU) const {
-		  AU.setPreservesAll();
+		  AU.addRequired<LoopInfo>();
 		}
+
 	};
 }
 
 char Hello::ID = 0;
-static RegisterPass<Hello> X("hello", "Hello World Pass");
+static RegisterPass<Hello> X("hello", "Hello World Pass", true, true);
 

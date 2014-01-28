@@ -22,17 +22,30 @@ entry:
 
 ; Function Attrs: nounwind uwtable
 define i32 @main() #0 {
-for.end7:
+entry:
   tail call void @second()
+  br label %while.cond
+
+while.cond:                                       ; preds = %while.cond, %entry
+  %call = tail call i32 @rand() #2
+  %rem = srem i32 %call, 20
+  %cmp = icmp eq i32 %rem, 3
+  br i1 %cmp, label %while.end, label %while.cond
+
+while.end:                                        ; preds = %while.cond
   tail call void @third()
   ret i32 0
 }
 
 ; Function Attrs: nounwind
-declare i32 @puts(i8* nocapture readonly) #1
+declare i32 @rand() #1
+
+; Function Attrs: nounwind
+declare i32 @puts(i8* nocapture readonly) #2
 
 attributes #0 = { nounwind uwtable "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #1 = { nounwind }
+attributes #1 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #2 = { nounwind }
 
 !llvm.ident = !{!0}
 
