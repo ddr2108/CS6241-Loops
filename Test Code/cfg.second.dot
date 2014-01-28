@@ -1,6 +1,0 @@
-digraph "CFG for 'second' function" {
-	label="CFG for 'second' function";
-
-	Node0x1ebe6d0 [shape=record,label="{entry:\l  %call = call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([13 x i8]*\l... @.str, i32 0, i32 0))\l  call void @exit(i32 3) #3\l  unreachable\l}"];
-	Node0x1ebec40 [shape=record,label="{return:                                           \l  ret void\l}"];
-}
