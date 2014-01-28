@@ -174,7 +174,10 @@ namespace {
 			//Number of Loops
 			for (LoopInfo::iterator newLoop = LI.begin(); newLoop != LI.end(); newLoop++) {
 					newStats.singleLoop++;
+					//int a =newLoop->getLoopDepth();
 			}
+
+LoopInfoBase &a = LI.getbase(); 
 
 
 			//If there is actually a block, then add info				
