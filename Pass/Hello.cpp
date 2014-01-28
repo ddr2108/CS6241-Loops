@@ -107,7 +107,7 @@ namespace {
 			CFG.print();
 			errs() << "Single Loops:";
 			singleLoop.print();
-			errs() << "Basic Blocks:";
+			errs() << "Basic Block Loops:";
 			basicBlockLoop.print();
 			errs() << "Dominators:";
 			dominators.print();
@@ -135,7 +135,6 @@ namespace {
 			//DominatorTree &dt = getAnalysis<DominatorTree>();
 			//DominatorTreeBase<BasicBlock>* dominatorTree = new DominatorTreeBase<BasicBlock>(false);			
 
-      errs().write_escaped(F.getName()) << '\n';
 			/////////////////////////////////DO BASIC BLOCK STUFF/////////////////////////////////////////////////
 			//Get list of basic blocks			
 			Function::BasicBlockListType &allblocks = F.getBasicBlockList();
@@ -144,10 +143,16 @@ namespace {
 				//Count Basic Blocks
 				newStats.basicBlocks++;
 
-				Loop* innerloop=LI.getLoopFor(&newBlock);
-				if(innerloop==NULL){ errs()<<" \n(not loop)\n ";}
-				else { errs()<<" \n(loop)\n ";}
+				//Check for basic block loops
+				Loop* innerloop=LI.getLoopFor(newBlock);
+				if(innerloop!=NULL){
+					newStats.basicBlockLoop++;
+				}
 
+				//Check for CFG
+				if (newBlock->getTerminator()->getOpcode() == 2){			//if call
+                            newStats.CFG+=(newBlock->getTerminator())->getNumSuccessors();
+				}
 
 				//Count Dominators
 				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
@@ -160,9 +165,7 @@ namespace {
 			///////////////////////////DO LOOP STUFF//////////////////////////////////////////////////////////////
 			//Do Loop stuff
 			for (LoopInfo::iterator newLoop = LI.begin(); newLoop != LI.end(); newLoop++) {
-      //          Function* function = newLoop.getHeader()->getParent();
-      //errs().write_escaped(function.getName()) << '\n';
-						errs() << "a"<< '\n';
+					newStats.singleLoop++;
 			}
 
 			//If there is actually a block, then add info				
