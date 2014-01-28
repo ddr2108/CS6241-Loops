@@ -73,15 +73,7 @@ namespace {
 
 			//Allocate array
 			dist = (int*) malloc(ind*ind*sizeof(int*));
-			for (i = 0; i<ind; i++){
-				for(j =0; j<ind; j++){
-					if (i==j){
-						dist[i*ind + j] = 0;
-					}else{
-						dist[i*ind + j] = 2147483645;
-					}
-				}
-			}
+
 			//Fill array will all with distance 1;
 			i = 0;
 			for (Function::const_iterator firstBlock = allblocks.begin(); firstBlock != allblocks.end(); firstBlock++) {
@@ -121,8 +113,6 @@ namespace {
 					}
 				}
 			}
-		
-			free(dist);
 
 			return false; 
 		}
