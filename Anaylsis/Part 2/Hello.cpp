@@ -78,7 +78,7 @@ namespace {
 					if (i==j){
 						dist[i*ind + j] = 0;
 					}else{
-						dist[i*ind + j] = 2147483645;
+						dist[i*ind + j] = 1000000000;
 					}
 				}
 			}
@@ -103,8 +103,10 @@ namespace {
 			for (int x = 0; x<ind ;x++){
 				for (int y = 0; y<ind ;y++){
 					for (int z = 0; z<ind ;z++){
-						if (dist[y*ind + z] > (dist[y*ind + x] + dist[x*ind + z])){ 
-							dist[y*ind + z] = dist[y*ind + x] + dist[x*ind + z];
+						if (y!=z){
+							if (dist[y*ind + z] > (dist[y*ind + x] + dist[x*ind + z])){ 
+								dist[y*ind + z] = dist[y*ind + x] + dist[x*ind + z];
+							}
 						}
 					}
 				}
@@ -115,7 +117,7 @@ namespace {
 			for (i = 0; i<ind; i++){
 				for(j =0; j<ind; j++){
 					if(dist[i*ind + j]==1){		//look for back edge
-						if(dist[j*ind + i]>0){
+						if(dist[j*ind + i]>0 && dist[j*ind + i]!=1000000000){
 							fullStats.loopsTotal++;		//Increment number of loops
 						}					
 					}

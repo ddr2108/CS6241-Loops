@@ -18,14 +18,21 @@ void second(){
 int main() {
   second();
 int i;
-while(rand()%1000!=3);
+/*while(rand()%1000!=3);
 {
 i++;
 while(rand()%5!=3){
-	if (i==4){
-		break;
+
 }
-}}
+}*/
+
+if (rand()%1000!=3){
+  printf("asdfas\n");
+}else if (rand()%1000!=9){
+  printf("asda\n");
+}else{
+  printf("asdaasd\n");
+}
 
   return 0;
 }
