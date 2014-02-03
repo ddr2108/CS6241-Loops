@@ -1,4 +1,4 @@
-clang++ -c Hello.cpp `llvm-config --cxxflags`;
-clang++ -shared -o pass.so Hello.o `llvm-config --ldflags`
-opt -load ./pass.so -hello <hello.bc> /dev/null
+clang++ -c p33.cpp `llvm-config --cxxflags`;
+clang++ -shared -o pass.so p33.o `llvm-config --ldflags`
+opt -load ./pass.so -p33 <hello.bc> /dev/null
 
