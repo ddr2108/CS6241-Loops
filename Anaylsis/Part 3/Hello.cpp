@@ -84,7 +84,7 @@ namespace {
 			}
 
 
-			//Find the loops
+			//post dominators
 			Function::const_iterator thirdBlock = allblocks.begin();
 			Function::const_iterator fourthBlock;
 			for (int x = 0; x<ind; x++){
@@ -93,7 +93,7 @@ namespace {
 
 				while (stackInd > 0){
 
-					int stackTail = stackDom[--stackInd];
+					int stackTail = stackDom[--stackInd];		//get the top of stack
 					fourthBlock = allblocks.begin();
 					for (int y = 0; y<ind; y++){
 						if (dist[y*ind + stackTail] == 1 && PDT.dominates(thirdBlock, fourthBlock)){		//if post dominates, add to stack
