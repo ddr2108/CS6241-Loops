@@ -144,9 +144,9 @@ namespace {
 				}
 
 				//Check for CFG
-				if (newBlock->getTerminator()->getOpcode() == 2){			//if call
+				//if (newBlock->getTerminator()->getOpcode() == 2){			//if call
 					newStats.CFG+=(newBlock->getTerminator())->getNumSuccessors();
-				}
+				//}
 
 				//Count Dominators
 				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
@@ -172,9 +172,7 @@ namespace {
 		}
 
 		virtual void getAnalysisUsage(AnalysisUsage &AU) const {
-		  AU.addRequired<LoopInfo>();
-               // AU.addRequired<DominatorTree>();
-
+		  AU.addRequired<LoopInfo>();		//add request
 		}
 
 	};
