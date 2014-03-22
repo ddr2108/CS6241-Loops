@@ -109,6 +109,7 @@ namespace {
 					if(dist[i*ind + j]==1){		//look for back edge
 						if(dist[j*ind + i]>0 && dist[j*ind + i]!=1000000000){
 							fullStats.loopsTotal+=1.0/(dist[j*ind + i]+1);		//Increment number of loops
+							errs()<<j<<','<< dist[j*ind + i] <<','<<i<<'\n';
 						}					
 					}
 				}

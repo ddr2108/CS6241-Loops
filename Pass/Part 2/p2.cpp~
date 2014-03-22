@@ -133,7 +133,7 @@ namespace {
 			//Get list of basic blocks			
 			Function::BasicBlockListType &allblocks = F.getBasicBlockList();
 			//Go through basic blocks
-			for (Function::const_iterator newBlock = allblocks.begin(); newBlock != allblocks.end(); newBlock++) {
+			for (Function::iterator newBlock = allblocks.begin(); newBlock != allblocks.end(); newBlock++) {
 				//Count Basic Blocks
 				newStats.basicBlocks++;
 
@@ -143,23 +143,20 @@ namespace {
 					newStats.basicBlockLoop++;
 				}
 
+				//if is a loopheader, then count a loop
+				if(LI.isLoopHeader(newBlock)==true){
+					newStats.singleLoop++;
+				}
+
 				//Check for CFG
-				//if (newBlock->getTerminator()->getOpcode() == 2){			//if call
-					newStats.CFG+=(newBlock->getTerminator())->getNumSuccessors();
-				//}
+				newStats.CFG+=(newBlock->getTerminator())->getNumSuccessors();
 
 				//Count Dominators
-				for (Function::const_iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
+				for (Function::iterator repeatBlock = allblocks.begin(); repeatBlock != allblocks.end(); repeatBlock++) {
 					if((dominatorTree->dominates(repeatBlock,newBlock))==true){
 						newStats.dominators++;
 					}
 				}
-			}
-
-			///////////////////////////DO LOOP STUFF//////////////////////////////////////////////////////////////
-			//Number of Loops
-			for (LoopInfo::iterator newLoop = LI.begin(); newLoop != LI.end(); newLoop++) {
-					newStats.singleLoop++;
 			}
 
 

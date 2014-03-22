@@ -20,7 +20,7 @@ int main() {
 int i = 0; 
 int j = 0;
 int k = 0;
-/*while(rand()%1000!=3){
+while(rand()%1000!=3){
 	i++;
 	printf("%d", i);
 while(rand()%5!=8){
@@ -33,7 +33,7 @@ while(rand()%5!=8){
 	}
 }
 
-}*/
+}
 	while(rand()%5!=8){
 		j++;
 		printf("%d", j);
